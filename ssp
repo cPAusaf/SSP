@@ -434,6 +434,7 @@ sub long_check_list {
     check_for_perl_env_var();
     check_for_disabled_services();
     check_for_cpbackup_exclude_everything();
+    check_metadata_vacuum();
     check_for_usr_local_include_jpeglib_h();
     check_for_bw_module_and_more_than_1024_vhosts();
     check_for_uppercase_chars_in_hostname();
@@ -6241,6 +6242,24 @@ sub check_for_cpbackup_exclude_everything {
         }
     }
     close $conf_fh;
+}
+
+sub check_metadata_vacuum {
+    return unless i_am('cpanel');
+    my $vacuum_metadata_pid = '/var/cpanel/vacuum_metadata.pid';
+    my $vacuum_metadata     = 0;
+
+    if ( -e $vacuum_metadata_pid ) {
+        if ( exists_process_cmd( qr{ vacuum_metadata }xms, 'root' ) ) {
+            $vacuum_metadata = 1;
+            print_warn('Backups: ');
+            print_warning('metadata.sqlite is being vacuumed');
+        }
+        else {
+            print_warn('Backups: ');
+            print_warning("$vacuum_metadata_pid exists, but 'vacuum_metadata' not found in process list");
+        }
+    }
 }
 
 sub check_for_usr_local_include_jpeglib_h {
