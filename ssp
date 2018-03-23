@@ -6245,7 +6245,6 @@ sub check_for_cpbackup_exclude_everything {
 }
 
 sub check_metadata_vacuum {
-    return unless i_am('cpanel');
     my $vacuum_metadata_pid = '/var/cpanel/vacuum_metadata.pid';
     my $vacuum_metadata     = 0;
 
